@@ -1,4 +1,5 @@
 Release
+Debug
 *.exe
 *.obj
 MKL_*
