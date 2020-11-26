@@ -1,0 +1,7 @@
+Release
+*.exe
+*.obj
+MKL_*
+*.MKL.*
+.vs
+
