@@ -60,6 +60,11 @@ namespace june19 {
 		int DrawX();
 		int DrawY();
 
+		bool Visible{ true };
+		bool Enabled{ true };
+
+		void Draw(bool force=false); // Draw a gadget and all its children (if visible)
+
 		// These methods should NEVER be called directly! FreeGadget() needs them
 		void KillKids(); // Called by "FreeGadget". Don't call this directly unless you know what you are doing
 		void DetachParent(); // Remove Gadget from parent's kids. NEVER call this yourself unless you know what you doing! FreeGadget needs this method, that's all!

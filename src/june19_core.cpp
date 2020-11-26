@@ -155,6 +155,25 @@ namespace june19 {
 		}
 	}
 
+	void j19gadget::Draw(bool force) {
+		_error = "";
+		if (force || Visible) {
+			if (!HowToDraw.count(kind)) {
+				_error = "Kind of type " + to_string((int)kind) + " has no draw routine";
+				return;
+			}
+			HowToDraw[kind](this);
+			for (auto kid : kids) kid->Draw(force);
+		}
+	}
+
+	void j19gadget::KillKids() {
+		auto copykids{ kids };
+		for (auto kid : copykids) {
+			FreeGadget(kid);
+		}
+	}
+
 	void j19gadget::DetachParent() {
 		parent->RemoveKid(this);
 	}
