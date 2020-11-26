@@ -19,7 +19,7 @@ using namespace TrickyUnits;
 			if (!parent) { _error = "No parent"; return 0; }\
 			return (int)floor(parent->rc() * (ac / 100)); \
 		default: \
-			_error = "Unknown coordinate calculation type! (bug?)"; \
+			_error = "Unknown coordinate calculation type! (bug?) ("+to_string((int)tx)+")"; \
 			return 0; \
 	}
 
@@ -40,6 +40,8 @@ namespace june19 {
 
 	std::map<j19kind, j19draw> j19gadget::HowToDraw;
 
+	bool j19gadget::haspulldown{ false };
+	bool j19gadget::hasstatus{ false };
 	bool j19gadget::RegDraw(j19kind k, j19draw v) {
 		_error = "";
 		if (HowToDraw.count(k)) {
@@ -112,8 +114,12 @@ namespace june19 {
 		case j19kind::EntireScreen:
 			return 0;
 		case j19kind::WorkScreen:
-			_error = "Workscreen not fully supported yet!";
-			return 0; // Pulldown menus and status bar can play a role here!
+		{
+			auto h{ TQSG_ScreenHeight() }; // Pulldown menus and status bar can play a role here!
+			auto fh{ FontHeight() };
+			if (haspulldown) h += fh;
+			return h;
+		}
 		default:
 			ggc(_y, ty, H);
 		}
@@ -125,8 +131,13 @@ namespace june19 {
 		case j19kind::EntireScreen:
 			return TQSG_ScreenHeight();
 		case j19kind::WorkScreen:
-			_error = "Workscreen not fully supported yet!";
-			return TQSG_ScreenWidth(); // Pulldown menus and status bar can play a role here!
+		{
+			auto h{ TQSG_ScreenHeight() }; // Pulldown menus and status bar can play a role here!
+			auto fh{ FontHeight() };
+			if (haspulldown) h -= fh;
+			if (hasstatus) h -= fh;
+			return h;
+		}
 		default:
 			ggc(_h, th, H);
 		}
@@ -153,6 +164,52 @@ namespace june19 {
 		default:
 			return Y() + parent->Y();
 		}
+	}
+
+	TQSG_ImageFont* j19gadget::Font() {
+		if (!fontloaded)
+			return nullptr;
+		return &_Font;
+	}
+
+	void j19gadget::KillFont() {
+		if (fontloaded) _Font.Kill();
+		fontloaded = false;
+	}
+
+	void j19gadget::SetFont(std::string FFile) {
+		auto J = jcr6::Dir(FFile);
+		SetFont(&J, "");
+	}
+
+	void j19gadget::SetFont(std::string MFile, std::string FFile) {
+		auto J = jcr6::Dir(MFile);
+		SetFont(&J, FFile);
+	}
+
+	void j19gadget::SetFont(jcr6::JT_Dir* MFile, std::string FFile) {
+		KillFont();
+		_Font.LoadFont(*MFile, FFile);
+		fontloaded = true;
+	}
+
+	int j19gadget::FontHeight() {
+		if (!fontloaded) return 0;
+		return Font()->TextHeight("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890 the quick brown fox jumps over the lazy dog");
+	}
+
+	void j19gadget::SetForeground(j19byte R, j19byte G, j19byte B, j19byte Alpha) {
+		FR = R; 
+		FG = G;
+		FB = B;
+		FA = Alpha;
+	}
+
+	void j19gadget::SetBackground(j19byte R, j19byte G, j19byte B, j19byte Alpha) {
+		BR = R;
+		BG = G;
+		BB = B;
+		BA = Alpha;
 	}
 
 	void j19gadget::Draw(bool force) {
@@ -215,6 +272,7 @@ namespace june19 {
 		}
 		gadget->KillKids();
 		gadget->DetachParent();
+		gadget->KillFont();
 		delete gadget;
 	}
 

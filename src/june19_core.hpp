@@ -3,6 +3,8 @@
 #include <string>
 #include <map>
 
+#include <TQSG.hpp>
+
 #define j19byte unsigned char
 
 #define j19nullgadget(gadget) {FreeGadget(gadget); gadget=nullptr;}
@@ -35,6 +37,10 @@ namespace june19 {
 		int _x{ 0 }, _y{ 0 }, _w{ 100 }, _h{ 100 };
 		j19ctype tx{ j19ctype::Absolute }, ty{ j19ctype::Absolute }, tw{ j19ctype::Absolute }, th { j19ctype::Absolute };
 		static std::map<j19kind, j19draw> HowToDraw;
+		bool fontloaded{ false };
+		TrickyUnits::TQSG_ImageFont _Font;
+		static bool haspulldown;
+		static bool hasstatus;
 	public:
 		static bool RegDraw(j19kind k, j19draw v);
 
@@ -62,6 +68,22 @@ namespace june19 {
 
 		bool Visible{ true };
 		bool Enabled{ true };
+
+		TrickyUnits::TQSG_ImageFont *Font();
+		void KillFont();
+		void SetFont(std::string FFile);
+		void SetFont(std::string MFile, std::string FFile);
+		void SetFont(jcr6::JT_Dir* MFile, std::string FFile);
+		int FontHeight();
+
+		std::string Caption{ "" };
+		std::string Text{ "" };
+
+		j19byte FR{ 255 }, FG{ 255 }, FB{ 255 }, FA{ 255 };
+		j19byte BR{ 0 }, BG{ 0 }, BB{ 0 }, BA{ 0 };
+
+		void SetForeground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 255);
+		void SetBackground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 0);
 
 		void Draw(bool force=false); // Draw a gadget and all its children (if visible)
 
