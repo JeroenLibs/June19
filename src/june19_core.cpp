@@ -36,7 +36,10 @@ namespace june19 {
 	static j19gadget _WorkScreen;
 
 	static void DrawScreen(j19gadget* self) {} // This just had to exist, that's all!
-	static bool DS_Success{ j19gadget::RegDraw(j19kind::EntireScreen,DrawScreen) };
+	static void DrawWorkScreen(j19gadget* self) {
+		// TODO: Pulldown
+		// TODO: Status
+	}
 
 	std::map<j19kind, j19draw> j19gadget::HowToDraw;
 
@@ -247,9 +250,9 @@ namespace june19 {
 	j19gadget* Screen() {
 		static bool initiated{ false };
 		if (!initiated) {
+			initiated = true;
 			WorkScreen();
 			_Screen.SetKind(j19kind::EntireScreen);
-			initiated = true;
 		}
 		return &_Screen;
 	}
@@ -257,9 +260,9 @@ namespace june19 {
 	j19gadget* WorkScreen() {
 		static bool initiated{ false };
 		if (!initiated) {
+			initiated = true;
 			_WorkScreen.SetParent(Screen());
 			_WorkScreen.SetKind(j19kind::WorkScreen);
-			initiated = true;
 		}
 		return &_WorkScreen;
 	}
@@ -275,5 +278,10 @@ namespace june19 {
 		gadget->KillFont();
 		delete gadget;
 	}
+
+	std::string GetCoreError() { return _error; }
+
+	static bool DS_Success{ j19gadget::RegDraw(j19kind::EntireScreen,DrawScreen) };
+	static bool DWS_Succes{ j19gadget::RegDraw(j19kind::WorkScreen,DrawWorkScreen) };
 
 }

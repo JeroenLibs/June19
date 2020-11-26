@@ -42,6 +42,7 @@ namespace june19 {
 		static bool haspulldown;
 		static bool hasstatus;
 	public:
+		int IntFlag{ 0 };
 		static bool RegDraw(j19kind k, j19draw v);
 
 		void SetKind(j19kind value); // Please note this only works once, and most creation fuctions take care of this automatically.
@@ -82,6 +83,8 @@ namespace june19 {
 		j19byte FR{ 255 }, FG{ 255 }, FB{ 255 }, FA{ 255 };
 		j19byte BR{ 0 }, BG{ 0 }, BB{ 0 }, BA{ 0 };
 
+		
+
 		void SetForeground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 255);
 		void SetBackground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 0);
 
@@ -97,5 +100,7 @@ namespace june19 {
 	j19gadget* Screen();
 	j19gadget* WorkScreen();
 	void FreeGadget(j19gadget* gadget); // Disposes a gadget and all its children. 
+
+	std::string GetCoreError();
 
 }
