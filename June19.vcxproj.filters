@@ -13,5 +13,69 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Test">
+      <UniqueIdentifier>{6046e19e-1461-4672-b5b7-a1e1ca74b2d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\june19">
+      <UniqueIdentifier>{6ba752ee-1565-47ab-91a4-51f1afe23076}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TQSG">
+      <UniqueIdentifier>{5561f050-cc5d-4d01-a8ba-2f5007774f35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\JCR6">
+      <UniqueIdentifier>{79201e5d-daad-4dd4-9191-dfcb1f68763a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Units">
+      <UniqueIdentifier>{6cfea681-2f4d-4393-b0f7-d239837968c3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Test_June19.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="src\june19_core.cpp">
+      <Filter>Source Files\june19</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TQSG\TQSE.cpp">
+      <Filter>Source Files\TQSG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TQSG\TQSG.cpp">
+      <Filter>Source Files\TQSG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\JCR6\src\jcr6_core.cpp">
+      <Filter>Source Files\JCR6</Filter>
+    </ClCompile>
+    <ClCompile Include="..\JCR6\src\jcr6_jxsda.cpp">
+      <Filter>Source Files\JCR6</Filter>
+    </ClCompile>
+    <ClCompile Include="..\JCR6\src\jcr6_quakepak.cpp">
+      <Filter>Source Files\JCR6</Filter>
+    </ClCompile>
+    <ClCompile Include="..\JCR6\src\jcr6_wad.cpp">
+      <Filter>Source Files\JCR6</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TrickyUnits\Source\JXSDA.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TrickyUnits\Source\QuickStream.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TrickyUnits\Source\QuickString.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\june19_core.hpp">
+      <Filter>Source Files\june19</Filter>
+    </ClInclude>
+    <ClInclude Include="src\june19.hpp">
+      <Filter>Source Files\june19</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TQSG\TQSE.hpp">
+      <Filter>Source Files\TQSG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TQSG\TQSG.hpp">
+      <Filter>Source Files\TQSG</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
