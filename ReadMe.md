@@ -25,7 +25,7 @@ Now if you just go for
 You will have all parts of june19 present if you do not want to use all the features June 19 has, ignore that file and just use 
 ~~~c++
 #include <june19_core.hpp>
-#inlcude <june19_.......> // Well the stuff you want there
+#include <june19_.......> // Well the stuff you want there
 ~~~
 
 Only june19_jcr6.hpp is not present in june19 as I am not sure if people are really into using JCR6 or being forced to use it.
