@@ -63,6 +63,9 @@
     <ClCompile Include="..\TrickyUnits\Source\QuickString.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
+    <ClCompile Include="src\june19_label.cpp">
+      <Filter>Source Files\june19</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\june19_core.hpp">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="..\TQSG\TQSG.hpp">
       <Filter>Source Files\TQSG</Filter>
+    </ClInclude>
+    <ClInclude Include="src\june19_label.hpp">
+      <Filter>Source Files\june19</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
