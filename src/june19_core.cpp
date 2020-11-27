@@ -62,8 +62,14 @@ namespace june19 {
 
 	std::map<j19kind, j19draw> j19gadget::HowToDraw;
 
+	j19gadget* j19gadget::active{ nullptr };
+	bool j19gadget::defaultfontloaded{ false };
+	TQSG_ImageFont j19gadget::_DefaultFont;
 	bool j19gadget::haspulldown{ false };
 	bool j19gadget::hasstatus{ false };
+	bool j19gadget::Active() { return active == this; }
+	void j19gadget::Activate() { active = this; }
+	void j19gadget::DeActivate() { active = nullptr; }
 	bool j19gadget::RegDraw(j19kind k, j19draw v) {
 		_error = "";
 		if (HowToDraw.count(k)) {
@@ -189,8 +195,10 @@ namespace june19 {
 	}
 
 	TQSG_ImageFont* j19gadget::Font() {
-		if (!fontloaded)
+		if (!fontloaded) {
+			if (defaultfontloaded) return &_DefaultFont;
 			return nullptr;
+		}
 		return &_Font;
 	}
 
@@ -214,6 +222,23 @@ namespace june19 {
 		_Font.LoadFont(*MFile, FFile);
 		fontloaded = true;
 	}
+
+	void j19gadget::SetDefaultFont(std::string FFile) {
+		auto J = jcr6::Dir(FFile);
+		SetDefaultFont(&J, "");
+	}
+
+	void j19gadget::SetDefaultFont(std::string MFile, std::string FFile) {
+		auto J = jcr6::Dir(MFile);
+		SetDefaultFont(&J, FFile);
+	}
+
+	void j19gadget::SetDefaultFont(jcr6::JT_Dir* MFile, std::string FFile) {
+		KillFont();
+		_DefaultFont.LoadFont(*MFile, FFile);
+		defaultfontloaded = true;
+	}
+
 
 	int j19gadget::FontHeight() {
 		if (!fontloaded) return 0;
@@ -295,6 +320,7 @@ namespace june19 {
 		gadget->KillKids();
 		gadget->DetachParent();
 		gadget->KillFont();
+		if (gadget->Active()) j19gadget::DeActivate();
 		delete gadget;
 	}
 

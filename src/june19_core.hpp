@@ -60,7 +60,15 @@ namespace june19 {
 		TrickyUnits::TQSG_ImageFont _Font;
 		static bool haspulldown;
 		static bool hasstatus;
+		static j19gadget* active;
+
+		static bool defaultfontloaded;
+		static TrickyUnits::TQSG_ImageFont _DefaultFont;
 	public:
+		bool Active();
+		void Activate();
+		static void DeActivate();
+
 		int IntFlag{ 0 };
 		static bool RegDraw(j19kind k, j19draw v);
 
@@ -94,6 +102,9 @@ namespace june19 {
 		void SetFont(std::string FFile);
 		void SetFont(std::string MFile, std::string FFile);
 		void SetFont(jcr6::JT_Dir* MFile, std::string FFile);
+		static void SetDefaultFont(std::string FFile);
+		static void SetDefaultFont(std::string MFile, std::string FFile);
+		static void SetDefaultFont(jcr6::JT_Dir* MFile, std::string FFile);
 		int FontHeight();
 
 		std::string Caption{ "" };
