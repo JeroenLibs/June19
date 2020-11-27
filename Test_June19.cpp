@@ -47,6 +47,7 @@ int main(int argcount, char** args) {
 		TQSG_Flip();
 		TQSE_Poll();
 	} until(TQSE_Quit());
+	FreeJune19();
 	TQSG_Close();
 	return 0;
 }

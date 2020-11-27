@@ -280,7 +280,7 @@ namespace june19 {
 	void j19gadget::KillKids() {
 		auto copykids{ kids };
 		for (auto kid : copykids) {
-			FreeGadget(kid);
+			if (kid!=&_WorkScreen) FreeGadget(kid);
 		}
 	}
 
@@ -331,6 +331,23 @@ namespace june19 {
 	}
 
 	std::string GetCoreError() { return _error; }
+
+	j19gadget* CreateGroup(int x, int y, int w, int h, j19gadget* Parent,j19ctype coordtype) {
+		static bool init{ j19gadget::RegDraw(j19kind::EntireScreen,DrawScreen) };
+		auto ret{ new j19gadget() };
+		ret->SetParent(Parent);
+		ret->SetKind(j19kind::Group);
+		ret->X(x, coordtype);
+		ret->Y(y, coordtype);
+		ret->W(w, coordtype);
+		ret->H(h, coordtype);
+		return ret;
+	}
+
+	void FreeJune19() {
+		Screen()->KillKids();
+		WorkScreen()->KillKids();
+	}
 
 	static bool DS_Success{ j19gadget::RegDraw(j19kind::EntireScreen,DrawScreen) };
 	static bool DWS_Succes{ j19gadget::RegDraw(j19kind::WorkScreen,DrawWorkScreen) };

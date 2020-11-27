@@ -48,6 +48,7 @@ namespace june19 {
 		TextField,
 		RadioButton,
 		CheckBox,
+		Picture,
 		ListBox
 	};
 
@@ -142,5 +143,9 @@ namespace june19 {
 	void FreeGadget(j19gadget* gadget); // Disposes a gadget and all its children. 
 
 	std::string GetCoreError();
+
+	j19gadget* CreateGroup(int x, int y, int w, int h, j19gadget* Parent, j19ctype coordtype = j19ctype::Absolute);
+
+	void FreeJune19(); // Frees all gadgets tried to Screen or WorkScreen. Recommended to do before closing down!
 
 }
