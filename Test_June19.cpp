@@ -41,6 +41,8 @@ int main(int argcount, char** args) {
 	auto TestLabel{ CreateLabel("Hello World",40,50,200,20,WS) }; TestLabel->SetFont(FontFile);
 	TestLabel->SetForeground(255,255,0);
 	TestLabel->SetBackground(255, 0, 0,255);
+	auto TestPicture{ CreatePicture(100,10,300,200,WS,Pic_FullStretch) };
+	TestPicture->Image("Test/Cute-Girl.png"); // Just a public domain picture I downloaded for testing this gadget type
 	do {
 		TQSG_Cls();
 		june19::Screen()->Draw();
