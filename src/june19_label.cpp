@@ -35,7 +35,7 @@ namespace june19{
 			TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
 			TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
 		}
-		TQSG_ACol(g->FG, g->FG, g->FB, g->FA);
+		TQSG_ACol(g->FR, g->FG, g->FB, g->FA);
 		switch (g->IntFlag) {
 		case 0:
 			F->Draw(g->Caption, g->DrawX(), g->DrawY());
