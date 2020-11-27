@@ -1,5 +1,5 @@
 // Lic:
-// src/june19.hpp
+// src/june19_picture.hpp
 // June 19
 // version: 20.11.27
 // Copyright (C) 2020 Jeroen P. Broks
@@ -18,6 +18,24 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 #pragma once
-#include "june19_label.hpp"
 #include "june19_core.hpp"
-#include "june19_picture.hpp"
+
+namespace june19 {
+
+	const int Pic_TopLeft = 0;
+	const int Pic_TopRight = 1;
+	const int Pic_TopCenter = 2;
+	const int Pic_CenterLeft = 3;
+	const int Pic_Center = 4;
+	const int Pic_Center_Right = 5;
+	const int Pic_BottomLeft = 6;
+	const int Pic_BottomRight = 7;
+	const int Pic_BottomCenter = 8;
+	const int Pic_Tiled = 9;
+	const int Pic_FullStretch = 10;
+	const int Pic_Fit = 11;
+
+	j19gadget* CreatePicture(int x, int y, int w, int h, j19gadget* Opoe, int flag = Pic_TopLeft);
+
+	
+}

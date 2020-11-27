@@ -70,6 +70,9 @@ namespace june19 {
 	bool j19gadget::Active() { return active == this; }
 	void j19gadget::Activate() { active = this; }
 	void j19gadget::DeActivate() { active = nullptr; }
+	j19kind j19gadget::GetKind() {
+		return kind;
+	}
 	bool j19gadget::RegDraw(j19kind k, j19draw v) {
 		_error = "";
 		if (HowToDraw.count(k)) {
@@ -250,6 +253,66 @@ namespace june19 {
 		return Font()->TextHeight("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890 the quick brown fox jumps over the lazy dog");
 	}
 
+	void j19gadget::KillImage(bool force) {
+		if (force || AutoDelImage) {
+			if (_Image) {
+				delete _Image;
+				_Image = nullptr;
+				AutoDelImage = false;
+				_ImageFrame = 0;
+			}
+		}
+	}
+
+	void j19gadget::Image(TQSG_Image* img, bool autodel) {
+		KillImage();
+		_ImageFrame = 0;
+		_Image = img;
+		AutoDelImage = autodel;
+	}
+
+	void j19gadget::Image(std::string img) {
+		auto i{ new TQSG_Image() };
+		i->Create(img);
+		if (TQSG_GetError() != "") {
+			cout << "\7ERROR:" << TQSG_GetError() << endl;
+			delete i;
+			return;
+		}
+		Image(i, true);
+	}
+
+	void j19gadget::Image(jcr6::JT_Dir mainfile, std::string img) {
+		auto i{ new TQSG_Image() };
+		i->Create(mainfile,img);
+		Image(i, true);
+	}
+
+	void j19gadget::Image(std::string mainfile, std::string img) {
+		auto i{ new TQSG_Image() };
+		i->Create(mainfile, img);
+		Image(i, true);
+	}
+
+	TrickyUnits::TQSG_Image* j19gadget::Image() {
+		return _Image;
+	}
+
+	void j19gadget::ImageFrame(int Frame) {
+		if (_Image) {
+			_ImageFrame = abs(Frame) % _Image->Frames();
+		}
+	}
+
+	int j19gadget::ImageFrame() {
+		return _ImageFrame;
+	}
+
+	void j19gadget::IncImageFrame(int modify) {
+		ImageFrame(ImageFrame() + modify);
+	}
+
+
 	void j19gadget::SetForeground(j19byte R, j19byte G, j19byte B, j19byte Alpha) {
 		FR = R; 
 		FG = G;
@@ -326,6 +389,7 @@ namespace june19 {
 		gadget->KillKids();
 		gadget->DetachParent();
 		gadget->KillFont();
+		gadget->KillImage();
 		if (gadget->Active()) j19gadget::DeActivate();
 		delete gadget;
 	}
@@ -351,5 +415,48 @@ namespace june19 {
 
 	static bool DS_Success{ j19gadget::RegDraw(j19kind::EntireScreen,DrawScreen) };
 	static bool DWS_Succes{ j19gadget::RegDraw(j19kind::WorkScreen,DrawWorkScreen) };
+
+	void j19gadgetitem::IconKill() {
+		if (!_Icon) return;
+		if (autodelicon) delete _Icon;
+		_Icon = nullptr;
+	}
+
+	j19gadgetitem::j19gadgetitem(j19gadget* Mama, std::string Capt) {
+		Caption = Capt;
+		Parent = Mama;
+	}
+
+	TQSG_Image* j19gadgetitem::Icon() { return _Icon; }
+
+	void j19gadgetitem::Icon(TQSG_Image* Ico, bool delwhenreleased) {
+		IconKill();
+		_Icon = Ico;
+		autodelicon = delwhenreleased;
+
+	}
+
+	void j19gadgetitem::Icon(std::string Ico) {
+		auto I{ new TQSG_Image() };
+		I->Create(Ico);
+		Icon(I, true);
+	}
+
+	void j19gadgetitem::Icon(jcr6::JT_Dir* J, std::string Ico) {
+		auto I{ new TQSG_Image() };
+		I->Create(*J, Ico);
+		Icon(I, true);
+	}
+
+	void j19gadgetitem::Icon(std::string JCRFile, std::string Ico) {
+		auto I{ new TQSG_Image() };
+		I->Create(JCRFile, Ico);
+		Icon(I, true);
+	}
+
+	j19gadget* j19gadgetitem::Kid() {
+		if (Parent->GetKind() != j19kind::Tabber) return nullptr;
+		return kid;
+	}
 
 }

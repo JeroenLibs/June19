@@ -37,7 +37,10 @@
 #define j19chat(A)
 #endif
 
+
 namespace june19 {
+
+	
 
 	enum class j19kind {
 		Unknown,
@@ -49,14 +52,35 @@ namespace june19 {
 		RadioButton,
 		CheckBox,
 		Picture,
-		ListBox
+		ListBox,
+		Tabber,
 	};
 
 	enum class j19ctype {  Absolute, Percent };
 
 	class j19gadget;
+	class j19gadgetitem;
 
 	typedef void (*j19draw)(j19gadget* g);
+
+	class j19gadgetitem {
+		j19gadget* Parent;
+		TrickyUnits::TQSG_Image* _Icon{ nullptr };
+		bool autodelicon{ false };
+		void IconKill();
+		j19gadget* kid{ nullptr }; // Only used by tabbers
+	public:
+		j19gadgetitem(j19gadget* Mama,std::string Capt="");
+		std::string Caption;
+		TrickyUnits::TQSG_Image* Icon();
+
+		void Icon(TrickyUnits::TQSG_Image* Ico,bool delwhenreleased=true);
+		void Icon(std::string Ico);
+		void Icon(jcr6::JT_Dir* J, std::string Ico);
+		void Icon(std::string JCRFile, std::string Ico);
+
+		j19gadget* Kid(); // Will be coded when the tabbers come
+	};
 
 	class j19gadget {
 	private:
@@ -74,10 +98,18 @@ namespace june19 {
 
 		static bool defaultfontloaded;
 		static TrickyUnits::TQSG_ImageFont _DefaultFont;
+
+		std::vector<j19gadgetitem*> Items;
+
+		TrickyUnits::TQSG_Image* _Image{ nullptr };
+		bool AutoDelImage{ false };
+		int _ImageFrame{ 0 };
+
 	public:
 		bool Active();
 		void Activate();
 		static void DeActivate();
+		j19kind GetKind();
 
 		int IntFlag{ 0 };
 		static bool RegDraw(j19kind k, j19draw v);
@@ -126,10 +158,38 @@ namespace june19 {
 
 		
 
+		// Kills an image, unless it was assinged with a direct pointer assignment (this check is omitted by giving 'true' to the force parameter, but I only recommend to do so if you know what you are doing).
+		void KillImage(bool force=false);
+
+		// Assigns image to a gadget (if the gadget doesn't support images this action will be ignored). If 'autodel' is set to true, the image will be removed from the memory when calling KillImage(), FreeGadget() or when assiging another image to it.
+		void Image(TrickyUnits::TQSG_Image* img, bool autodel = false);
+
+		// Assigns image to a gadget from a file.
+		void Image(std::string img);
+
+		// Assigns image to a gadget from a JCR resource
+		void Image(jcr6::JT_Dir mainfile, std::string img);
+		// Assigns image to a gadget from a JCR resource
+		void Image(std::string mainfile, std::string img);
+
+		// Obtains the image pointer inside this gadget (retuns nullptr if no such image exists)
+		TrickyUnits::TQSG_Image* Image();
+
+		// Sets Image Frame value (mind the number of available frames as going for more can have funny results)
+		void ImageFrame(int Frame);
+		// Gets image Frame value
+		int ImageFrame();
+		// Increase image frame
+		void IncImageFrame(int modify);
+
+		// sets the Foreground color of the gadget
 		void SetForeground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 255);
+
+		// Sets the background color of the gadget
 		void SetBackground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 0);
 
-		void Draw(bool force=false); // Draw a gadget and all its children (if visible)
+		// Draw a gadget and all its children (if visible)
+		void Draw(bool force=false); 
 
 		// These methods should NEVER be called directly! FreeGadget() needs them
 		void KillKids(); // Called by "FreeGadget". Don't call this directly unless you know what you are doing
