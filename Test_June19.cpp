@@ -24,13 +24,23 @@
 #include "src/june19.hpp"
 
 
+#define FontFile "Test/Robotica.18.jfbf"
+
 #define until(yeah) while(!(yeah))
 
+using namespace june19;
 using namespace TrickyUnits;
+using namespace jcr6;
 
 int main(int argcount, char** args) {
+	init_JCR6();
 	TQSG_Init("Test June19");
 	TQSE_Init();
+	j19chat("Window size: " << TQSG_ScreenHeight() << "x" << TQSG_ScreenHeight());
+	auto WS{ WorkScreen() };
+	auto TestLabel{ CreateLabel("Hello World",40,50,200,20,WS) }; TestLabel->SetFont(FontFile);
+	TestLabel->SetForeground(255,255,0);
+	TestLabel->SetBackground(255, 0, 0,255);
 	do {
 		TQSG_Cls();
 		june19::Screen()->Draw();

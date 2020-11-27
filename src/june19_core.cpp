@@ -143,7 +143,7 @@ namespace june19 {
 			return 0;
 		case j19kind::WorkScreen:
 		{
-			auto h{ TQSG_ScreenHeight() }; // Pulldown menus and status bar can play a role here!
+			auto h{ 0 }; // Pulldown menus and status bar can play a role here!
 			auto fh{ FontHeight() };
 			if (haspulldown) h += fh;
 			return h;
@@ -177,7 +177,7 @@ namespace june19 {
 		case j19kind::WorkScreen:
 			return 0;
 		default:
-			return X() + parent->X();
+			return X() + parent->DrawX();
 		}
 
 	}
@@ -190,7 +190,7 @@ namespace june19 {
 			_error = "Workscreen not fully supported yet!";
 			return 0; // Pulldown menus and status bar can play a role here!
 		default:
-			return Y() + parent->Y();
+			return Y() + parent->DrawY();
 		}
 	}
 
@@ -234,9 +234,14 @@ namespace june19 {
 	}
 
 	void j19gadget::SetDefaultFont(jcr6::JT_Dir* MFile, std::string FFile) {
-		KillFont();
+		KillDefaultFont();
 		_DefaultFont.LoadFont(*MFile, FFile);
 		defaultfontloaded = true;
+	}
+
+	void j19gadget::KillDefaultFont() {
+		if (defaultfontloaded) _DefaultFont.Kill();
+		defaultfontloaded = false;
 	}
 
 
@@ -260,7 +265,8 @@ namespace june19 {
 	}
 
 	void j19gadget::Draw(bool force) {
-		_error = "";
+		_error = "";		
+		j19chat("Drawing: " << (int)kind);
 		if (force || Visible) {
 			if (!HowToDraw.count(kind)) {
 				_error = "Kind of type " + to_string((int)kind) + " has no draw routine";

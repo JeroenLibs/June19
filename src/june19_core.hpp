@@ -18,6 +18,7 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 #pragma once
+#include <iostream>
 #include <vector>
 #include <string>
 #include <map>
@@ -27,6 +28,14 @@
 #define j19byte unsigned char
 
 #define j19nullgadget(gadget) {FreeGadget(gadget); gadget=nullptr;}
+
+#undef j19loudmouth
+
+#ifdef j19loudmouth
+#define j19chat(A) std::cout << "LOUDMOUTH:> " << A << std::endl
+#else
+#define j19chat(A)
+#endif
 
 namespace june19 {
 
@@ -105,6 +114,7 @@ namespace june19 {
 		static void SetDefaultFont(std::string FFile);
 		static void SetDefaultFont(std::string MFile, std::string FFile);
 		static void SetDefaultFont(jcr6::JT_Dir* MFile, std::string FFile);
+		static void KillDefaultFont();
 		int FontHeight();
 
 		std::string Caption{ "" };

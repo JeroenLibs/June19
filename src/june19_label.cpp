@@ -24,11 +24,18 @@
 namespace june19{
 
 	static std::string _error;
+	using namespace TrickyUnits;
 
 	static void DrawLabel(j19gadget*g){
+		j19chat("Drawing label: " << g->Caption << "(" << g->DrawX() << "," << g->DrawY() << ")");
 		_error = "";
 		auto F{ g->Font() };
-		if (!F) { _error = "No font for label"; return; }
+		if (!F) { _error = "No font for label"; j19chat("Font issue");  return; }
+		if (g->BA) {
+			TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
+			TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+		}
+		TQSG_ACol(g->FG, g->FG, g->FB, g->FA);
 		switch (g->IntFlag) {
 		case 0:
 			F->Draw(g->Caption, g->DrawX(), g->DrawY());
@@ -52,6 +59,7 @@ namespace june19{
 			j19gadget::RegDraw(j19kind::Label,DrawLabel);
 		}
 		_error = "";
+		ret->SetKind(j19kind::Label);
 		ret->Caption = name;
 		ret->X(x);
 		ret->Y(y);
