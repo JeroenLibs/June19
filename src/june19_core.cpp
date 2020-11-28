@@ -1,7 +1,7 @@
 // Lic:
 // src/june19_core.cpp
 // June 19
-// version: 20.11.27
+// version: 20.11.28
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -206,8 +206,9 @@ namespace june19 {
 	}
 
 	void j19gadget::KillFont() {
+		cout << "Killing font for gadget " << this << " f:" << &_Font << "\t" << fontloaded << endl;
 		if (fontloaded) _Font.Kill();
-		fontloaded = false;
+		fontloaded = false;		
 	}
 
 	void j19gadget::SetFont(std::string FFile) {
@@ -249,7 +250,7 @@ namespace june19 {
 
 
 	int j19gadget::FontHeight() {
-		if (!fontloaded) return 0;
+		if (!Font()) return 0;
 		return Font()->TextHeight("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890 the quick brown fox jumps over the lazy dog");
 	}
 
@@ -329,10 +330,11 @@ namespace june19 {
 
 	void j19gadget::Draw(bool force) {
 		_error = "";		
-		j19chat("Drawing: " << (int)kind);
+		j19chat("Drawing: " << (int)kind << " at (" << X() << "." << DrawX() << " , " << Y() << "." << DrawY() << ") siz: " << W() << "x" << H() << "\tVis:" << Visible << "\tKids:" << kids.size());
 		if (force || Visible) {
 			if (!HowToDraw.count(kind)) {
 				_error = "Kind of type " + to_string((int)kind) + " has no draw routine";
+				j19chat(_error);
 				return;
 			}
 			HowToDraw[kind](this);
@@ -345,6 +347,7 @@ namespace june19 {
 		for (auto kid : copykids) {
 			if (kid!=&_WorkScreen) FreeGadget(kid);
 		}
+		kids.clear();
 	}
 
 	void j19gadget::DetachParent() {
@@ -358,6 +361,53 @@ namespace june19 {
 			if (f >= kids.size()) { _error = "Kid to remove not found!"; return; }
 		} while (kids[f++] != kid);
 		kids.erase(kids.begin() + f);
+	}
+
+	void j19gadget::AddItem(std::string ItemText) {
+		auto item{ new j19gadgetitem(this,ItemText) };
+		Items.push_back(item);
+	}
+
+	void j19gadget::ClearItems() {
+		for (auto i : Items) {
+			i->IconKill();
+			i->KillKid();
+		}
+		Items.clear();
+	}
+
+	size_t j19gadget::NumItems() { return Items.size(); }
+
+	long long j19gadget::SelectedItem() {
+		if (_SelectedItem >= Items.size()) _SelectedItem = -1;
+		return _SelectedItem;
+	}
+
+	void j19gadget::SelectItem(long long idx) {
+		_SelectedItem = idx;
+		if (_SelectedItem >= Items.size()) _SelectedItem = -1;
+	}
+
+	void j19gadget::ItemText(long long idx, std::string NewText) {
+		if (idx < 0) { _error = "Illegal index"; return; }
+		if (idx >= NumItems()) { _error = "Item index out of range"; return; }
+		Items[idx]->Caption = NewText;
+	}
+
+	void j19gadget::ItemText(std::string NewText) { ItemText(SelectedItem(), NewText); }
+
+	std::string j19gadget::ItemText(long long idx) {
+		if (idx < 0) { _error = "Illegal index"; return ""; }
+		if (idx >= NumItems()) { _error = "Item index out of range"; return ""; }
+		return Items[idx]->Caption;
+	}
+
+	std::string j19gadget::ItemText() { return ItemText(SelectedItem()); }
+
+	j19gadgetitem* j19gadget::__ITEM(long long idx) {
+		if (idx < 0) { _error = "Illegal index"; return nullptr; }
+		if (idx >= NumItems()) { _error = "Item index out of range"; return nullptr; }
+		return Items[idx];
 	}
 
 	j19gadget* Screen() {
@@ -388,8 +438,9 @@ namespace june19 {
 		}
 		gadget->KillKids();
 		gadget->DetachParent();
-		gadget->KillFont();
+		//gadget->KillFont();
 		gadget->KillImage();
+		gadget->ClearItems();
 		if (gadget->Active()) j19gadget::DeActivate();
 		delete gadget;
 	}
@@ -397,7 +448,7 @@ namespace june19 {
 	std::string GetCoreError() { return _error; }
 
 	j19gadget* CreateGroup(int x, int y, int w, int h, j19gadget* Parent,j19ctype coordtype) {
-		static bool init{ j19gadget::RegDraw(j19kind::EntireScreen,DrawScreen) };
+		static bool init{ j19gadget::RegDraw(j19kind::Group,DrawScreen) };
 		auto ret{ new j19gadget() };
 		ret->SetParent(Parent);
 		ret->SetKind(j19kind::Group);
@@ -408,7 +459,7 @@ namespace june19 {
 		return ret;
 	}
 
-	void FreeJune19() {
+	void FreeJune19() {		
 		Screen()->KillKids();
 		WorkScreen()->KillKids();
 	}
@@ -457,6 +508,20 @@ namespace june19 {
 	j19gadget* j19gadgetitem::Kid() {
 		if (Parent->GetKind() != j19kind::Tabber) return nullptr;
 		return kid;
+	}
+
+	void j19gadgetitem::CreateKid() {
+		KillKid();
+		kid = CreateGroup(2, 2, 10, 10, Parent);
+		// Please note, the width and height will always be automatically re-adjugest by the parent, so 10x10 is only a base value so i can start somewhere
+	}
+
+	void j19gadgetitem::KillKid() {
+		if (kid) { 
+			//FreeGadget(kid);
+			//delete kid; kid = nullptr; 
+			kid = nullptr;
+		}
 	}
 
 }

@@ -1,7 +1,7 @@
 // Lic:
 // src/june19_core.hpp
 // June 19
-// version: 20.11.27
+// version: 20.11.28
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,7 @@
 #include <map>
 
 #include <TQSG.hpp>
-
+#include <TQSE.hpp>
 #define j19byte unsigned char
 
 #define j19nullgadget(gadget) {FreeGadget(gadget); gadget=nullptr;}
@@ -67,19 +67,21 @@ namespace june19 {
 		j19gadget* Parent;
 		TrickyUnits::TQSG_Image* _Icon{ nullptr };
 		bool autodelicon{ false };
-		void IconKill();
 		j19gadget* kid{ nullptr }; // Only used by tabbers
 	public:
 		j19gadgetitem(j19gadget* Mama,std::string Capt="");
 		std::string Caption;
 		TrickyUnits::TQSG_Image* Icon();
 
+		void IconKill();
 		void Icon(TrickyUnits::TQSG_Image* Ico,bool delwhenreleased=true);
 		void Icon(std::string Ico);
 		void Icon(jcr6::JT_Dir* J, std::string Ico);
 		void Icon(std::string JCRFile, std::string Ico);
 
 		j19gadget* Kid(); // Will be coded when the tabbers come
+		void CreateKid();
+		void KillKid();
 	};
 
 	class j19gadget {
@@ -105,11 +107,16 @@ namespace june19 {
 		bool AutoDelImage{ false };
 		int _ImageFrame{ 0 };
 
+		long long _SelectedItem{ -1 };
+
 	public:
 		bool Active();
 		void Activate();
 		static void DeActivate();
 		j19kind GetKind();
+
+		// Will contain true if an item was selected the last time a gadget was drawn (never assign any data to this variable yourself).
+		bool EventSelectItem{ false };
 
 		int IntFlag{ 0 };
 		static bool RegDraw(j19kind k, j19draw v);
@@ -195,6 +202,29 @@ namespace june19 {
 		void KillKids(); // Called by "FreeGadget". Don't call this directly unless you know what you are doing
 		void DetachParent(); // Remove Gadget from parent's kids. NEVER call this yourself unless you know what you doing! FreeGadget needs this method, that's all!
 		void RemoveKid(j19gadget *kid); // Remove kid from parent. NEVER call this yuourself, unless youknow what you are doing! FreeGadget needs this methid, and that's all!
+
+		// Adds an item to a gadget, please note that if you do this with a gadget that is not item based nothing visual will happen, and you will only waste RAM.
+		void AddItem(std::string ItemText);
+
+		// Removes all items from a gadget
+		void ClearItems();
+
+		// Returns the number of items in a gadget
+		size_t NumItems();
+
+		// Returns the index number of the selected, or -1 when none is selected
+		long long SelectedItem();
+
+		void SelectItem(long long idx);
+
+		// Returns item text of an item
+		void ItemText(long long idx, std::string NewText);
+		void ItemText(std::string NewText);
+		std::string ItemText(long long idx);
+		std::string ItemText();
+
+
+		j19gadgetitem* __ITEM(long long idx); // NOT TO BE CALLED DIRECTLY! Some gadgets need this
 
 	};
 

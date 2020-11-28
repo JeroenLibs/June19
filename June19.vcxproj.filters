@@ -69,6 +69,9 @@
     <ClCompile Include="src\june19_picture.cpp">
       <Filter>Source Files\june19</Filter>
     </ClCompile>
+    <ClCompile Include="src\june19_tabber.cpp">
+      <Filter>Source Files\june19</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\june19_core.hpp">
@@ -87,6 +90,9 @@
       <Filter>Source Files\june19</Filter>
     </ClInclude>
     <ClInclude Include="src\june19_picture.hpp">
+      <Filter>Source Files\june19</Filter>
+    </ClInclude>
+    <ClInclude Include="src\june19_tabber.hpp">
       <Filter>Source Files\june19</Filter>
     </ClInclude>
   </ItemGroup>

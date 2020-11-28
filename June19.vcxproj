@@ -156,6 +156,7 @@
     <ClCompile Include="src\june19_core.cpp" />
     <ClCompile Include="src\june19_label.cpp" />
     <ClCompile Include="src\june19_picture.cpp" />
+    <ClCompile Include="src\june19_tabber.cpp" />
     <ClCompile Include="Test_June19.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="src\june19_core.hpp" />
     <ClInclude Include="src\june19_label.hpp" />
     <ClInclude Include="src\june19_picture.hpp" />
+    <ClInclude Include="src\june19_tabber.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

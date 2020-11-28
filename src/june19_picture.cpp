@@ -24,7 +24,7 @@ using namespace TrickyUnits;
 
 namespace june19 {
 
-	std::string _error;
+	static std::string _error;
 
     void PicDraw(j19gadget* g){
 		auto img{ g->Image() };
