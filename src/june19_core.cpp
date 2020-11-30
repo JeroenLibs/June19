@@ -73,6 +73,7 @@ namespace june19 {
 	j19kind j19gadget::GetKind() {
 		return kind;
 	}
+	j19gadget* j19gadget::GetParent() { return parent; }
 	bool j19gadget::RegDraw(j19kind k, j19draw v) {
 		_error = "";
 		if (HowToDraw.count(k)) {
@@ -197,6 +198,15 @@ namespace june19 {
 		}
 	}
 
+	bool j19gadget::RecEnabled() {
+		auto work{ this };
+		do {
+			if (!work->Enabled) return false;
+			work = work->parent;
+		} while (work);
+		return true;
+	}
+
 	TQSG_ImageFont* j19gadget::Font() {
 		if (!fontloaded) {
 			if (defaultfontloaded) return &_DefaultFont;
@@ -276,7 +286,7 @@ namespace june19 {
 		auto i{ new TQSG_Image() };
 		i->Create(img);
 		if (TQSG_GetError() != "") {
-			cout << "\7ERROR:" << TQSG_GetError() << endl;
+			cout << "\7ERROR:" << TQSG_GetError() << "\n";
 			delete i;
 			return;
 		}
@@ -284,8 +294,9 @@ namespace june19 {
 	}
 
 	void j19gadget::Image(jcr6::JT_Dir mainfile, std::string img) {
-		auto i{ new TQSG_Image() };
+		auto i{ new TQSG_Image() };		
 		i->Create(mainfile,img);
+		if (TQSG_GetError() != "") cout << "\7ERROR: " << TQSG_GetError() << "endl";
 		Image(i, true);
 	}
 
@@ -338,6 +349,7 @@ namespace june19 {
 				return;
 			}
 			HowToDraw[kind](this);
+			if (CBDraw) CBDraw(this, j19action::Draw);
 			for (auto kid : kids) kid->Draw(force);
 		}
 	}
@@ -479,6 +491,15 @@ namespace june19 {
 	}
 
 	TQSG_Image* j19gadgetitem::Icon() { return _Icon; }
+
+	size_t j19gadget::NumKids() {
+		return kids.size();
+	}
+
+	j19gadget* j19gadget::Kid(size_t idx) {
+		if (idx >= NumKids()) return nullptr;
+		return kids[idx];
+	}
 
 	void j19gadgetitem::Icon(TQSG_Image* Ico, bool delwhenreleased) {
 		IconKill();

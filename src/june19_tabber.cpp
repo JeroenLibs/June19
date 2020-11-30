@@ -44,9 +44,10 @@ namespace june19 {
 			int x{ rx }; rx += w; 
 			if (x && rx > g->W()) { rx = 0; ry += fs + 4; }
 			int y{ ry }; rh = g->H() - (y+h);
-			if (TQSE_MouseHit(1) && TQSE_MouseX() > x + g->DrawX() && TQSE_MouseX() + x + w + g->DrawX() && TQSE_MouseY() > y + g->DrawY() && TQSE_MouseY() + y + h + g->DrawY()) {
+			if (TQSE_MouseHit(1) && TQSE_MouseX() > x + g->DrawX() && TQSE_MouseX() + x + w + g->DrawX() && TQSE_MouseY() > y + g->DrawY() && TQSE_MouseY() < y + h + g->DrawY()) {
 				g->EventSelectItem = true;
 				g->SelectItem(i);
+				if (g->CBAction) g->CBAction(g, j19action::Select);
 			}
 			TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
 			TQSG_Rect(x+g->DrawX(), y+g->DrawY(), w, h);
