@@ -1,7 +1,7 @@
 // Lic:
 // src/june19_core.cpp
 // June 19
-// version: 20.11.28
+// version: 20.11.30
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
