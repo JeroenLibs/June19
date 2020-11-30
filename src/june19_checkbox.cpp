@@ -66,6 +66,5 @@ namespace june19 {
 		ret->IntFlag = 0;
 		ret->checked = checkedbydefault;
 		return ret;
-		return nullptr;
 	}
 }
