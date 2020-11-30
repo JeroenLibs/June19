@@ -68,7 +68,8 @@ namespace june19 {
 	bool j19gadget::haspulldown{ false };
 	bool j19gadget::hasstatus{ false };
 	bool j19gadget::Active() { return active == this; }
-	void j19gadget::Activate() { active = this; }
+	void j19gadget::Activate() { active = this; j19callback(this, Activate); }
+	
 	void j19gadget::DeActivate() { active = nullptr; }
 	j19kind j19gadget::GetKind() {
 		return kind;

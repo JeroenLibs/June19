@@ -18,12 +18,57 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 #include "june19_textfield.hpp"
+#include <QuickString.hpp>
 
 using namespace std;
+using namespace TrickyUnits;
 
 namespace june19 {
 
 	void DrawTextfield(j19gadget*g){
+		auto deler{ 1 }; if (!g->RecEnabled()) deler = 2;
+		auto co{ (SDL_GetTicks() / 500) % 2 };
+		string cur{ " " };
+		auto act{ g->Active() };
+		TQSG_ACol(g->BR / deler, g->BG / deler, g->BB / deler, g->BA);
+		TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+		TQSG_ACol(g->FR / deler, g->FG / deler, g->FB / deler, g->FA);
+		if (act) {
+			TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H(),true);
+			if (g->RecEnabled()) {
+				if (co) cur = "_";
+				auto k{ TQSE_GetChar() };
+				switch (k) {
+				case '\b':
+					if (g->Text.size()) {
+						g->Text = TrickyUnits::left(g->Text, g->Text.size() - 1);
+						j19callback(g, BackSpace);
+					}
+					break;
+				case '\t':
+					break; // Sorry, no tabs allowed. Could btw also serve for next textfield, but that's not worth the trouble, honest!
+				case '\r':
+					j19callback(g, Enter);
+				default:
+					if (k >= 32 && k <= 126) {
+						auto txt{ g->Text };
+						txt += k;
+						//cout << "DEBUG TEXTFIELD TYPE: Received key: " << k << ";\t Text:\"" << txt << "_" << "\";\t TextWidth:" << g->Font()->TextWidth(string(txt + "_").c_str()) << ";\tGadgetWidth:" << (g->W() - 4) << endl;
+						if (g->Font()->TextWidth(string(txt + "_").c_str()) <= g->W() - 4) {
+							g->Text = txt;
+							j19callback(g, Type);
+						}
+					}
+				}
+			}
+		}
+		g->Font()->Draw(g->Text + cur, g->DrawX() + 2, g->DrawY() + (g->H() / 2), 0, 2);
+		//cout << "AutoResize: " << g->AutoResize << " H:" << g->H() << " FontSize+4" << (g->FontHeight() + 4) << "\n";
+		if (g->AutoResize) {
+			if (g->H() < g->FontHeight()+4) g->H(g->H() + 1);
+			else if (g->H() > g->FontHeight()+4) g->H(g->H() - 1);			
+		}
+		if (TQSE_MouseHit(1) && TQSE_MouseX() >= g->DrawX() && TQSE_MouseY() >= g->DrawY() && TQSE_MouseX() <= g->DrawX() + g->W() && TQSE_MouseY() <= g->DrawY() + g->H()) { g->Activate(); }
 	}
 
 	static string _error{ "" };
@@ -46,7 +91,8 @@ namespace june19 {
 		ret->W(w);
 		ret->H(h);
 		ret->SetParent(ouwe);
-		ret->IntFlag = w<=0;
+		ret->BA = 110;
+		ret->AutoResize = h<=0;
 		return ret;
 
     }
