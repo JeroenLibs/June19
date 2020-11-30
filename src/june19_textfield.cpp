@@ -19,8 +19,35 @@
 // EndLic
 #include "june19_textfield.hpp"
 
+using namespace std;
+
 namespace june19 {
+
+	void DrawTextfield(j19gadget*g){
+	}
+
+	static string _error{ "" };
     j19gadget* june19::CreateTextfield(int x, int y, int w, j19gadget* ouwe, std::string defaultvalue) {
-        return nullptr;
+        return CreateTextfield(x, y, w, 0, ouwe, defaultvalue);
+    }
+
+    j19gadget* CreateTextfield(int x, int y, int w, int h, j19gadget* ouwe, std::string defaultvalue) {
+		static auto init{ false };
+		auto ret{ new j19gadget() };
+		if (!init) {
+			j19gadget::RegDraw(j19kind::Textfield, DrawTextfield);
+		}
+		_error = "";
+		ret->SetKind(j19kind::Textfield);
+		ret->Caption = "";
+		ret->Text = defaultvalue;
+		ret->X(x);
+		ret->Y(y);
+		ret->W(w);
+		ret->H(h);
+		ret->SetParent(ouwe);
+		ret->IntFlag = w<=0;
+		return ret;
+
     }
 }
