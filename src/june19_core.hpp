@@ -55,7 +55,8 @@ namespace june19 {
 		Picture,
 		ListBox,
 		Tabber,
-		Textfield
+		Textfield,
+		Button
 	};
 
 	enum class j19ctype {  Absolute, Percent };
@@ -125,7 +126,8 @@ namespace june19 {
 		static void DeActivate();
 		j19kind GetKind();
 		j19gadget* GetParent();
-		bool AutoResize{ false }; // Only works on TextFields
+		bool AutoResize{ false }; // Only works on TextFields and buttons
+		bool Down{ false }; // Used for button mouse checks. That always works a bit odd on buttons, eh?
 
 		// Will contain true if an item was selected the last time a gadget was drawn (never assign any data to this variable yourself).
 		bool EventSelectItem{ false };

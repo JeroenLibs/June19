@@ -182,7 +182,10 @@ namespace june19 {
 		case j19kind::WorkScreen:
 			return 0;
 		default:
-			return X() + parent->DrawX();
+			if (X() < 0)
+				return (parent->DrawX() + parent->W()) + X();
+			else
+				return X() + parent->DrawX();
 		}
 
 	}
@@ -195,7 +198,10 @@ namespace june19 {
 			_error = "Workscreen not fully supported yet!";
 			return 0; // Pulldown menus and status bar can play a role here!
 		default:
-			return Y() + parent->DrawY();
+			if (Y() < 0)
+				return (parent->DrawY() + parent->H()) + Y();
+			else
+				return Y() + parent->DrawY();
 		}
 	}
 
