@@ -54,6 +54,8 @@ namespace june19 {
 	static j19gadget _Screen;
 	static j19gadget _WorkScreen;
 
+	static vector <j19pulldown> _MenuBar{};
+
 	static void DrawScreen(j19gadget* self) {} // This just had to exist, that's all!
 	static void DrawWorkScreen(j19gadget* self) {
 		// TODO: Pulldown
@@ -429,6 +431,12 @@ namespace june19 {
 		return Items[idx];
 	}
 
+	j19pulldown* j19gadget::AddMenu(std::string Caption) {
+		haspulldown = true;
+		_MenuBar.push_back(j19pulldown(Caption));		
+		return &(_MenuBar[_MenuBar.size() - 1]);
+	}
+
 	j19gadget* Screen() {
 		static bool initiated{ false };
 		if (!initiated) {
@@ -551,5 +559,30 @@ namespace june19 {
 			kid = nullptr;
 		}
 	}
-
+	j19pulldown* j19pulldown::Active{ nullptr };
+	j19pulldown* j19pulldown::AddMenu(std::string Caption) {
+		if (this->_type != 1) {
+			return nullptr; // You can't add items to non-submenus.
+		}
+		j19pulldown ret{ Caption };
+		ret._parent = this;
+		return &ret;
+	}
+	j19pulldown* j19pulldown::AddItem(std::string Caption, j19callbackfunc CallBack, SDL_KeyCode QuickKey) {
+		auto ret{ AddMenu(Caption) };
+		if (!ret) return nullptr; // Crash prevention
+		ret->_CallBack = CallBack;
+		ret->_type = 0;
+		ret->_quickkey = QuickKey;
+		return ret;
+	}
+	j19pulldown* j19pulldown::AddStrike() {
+		auto ret{ AddMenu("-----") };
+		if (!ret) return nullptr; // Crash prevention
+		ret->_type = 2;
+	}
+	j19pulldown::j19pulldown(std::string aCaption) {
+		_type = 1;
+		Caption = aCaption;
+	}
 }

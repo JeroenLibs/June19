@@ -23,6 +23,7 @@
 #include <string>
 #include <map>
 
+
 #include <TQSG.hpp>
 #include <TQSE.hpp>
 #define j19byte unsigned char
@@ -60,10 +61,12 @@ namespace june19 {
 	};
 
 	enum class j19ctype {  Absolute, Percent };
-	enum class j19action {Unknown,Click,Select,Activate,Draw,Check,UnCheck,Type,Enter,BackSpace};
+	enum class j19action {Unknown,Click,Select,Activate,Draw,Check,UnCheck,Type,Enter,BackSpace,PDMenuAction};
 
 	class j19gadget;
 	class j19gadgetitem;
+	class j19pulldown;
+
 
 	typedef void (*j19draw)(j19gadget* g);
 
@@ -251,6 +254,27 @@ namespace june19 {
 		// If defined this will be called every time a Draw action is requested from this gadget
 		j19callbackfunc CBDraw{ nullptr };
 
+		j19pulldown* AddMenu(std::string Caption);
+	};
+
+	class j19pulldown {
+	private:
+		unsigned char _type{ 0 }; // 0 = normal, 1 = submenu, 2 = strike
+		std::vector<j19pulldown> _kids{};
+		j19callbackfunc _CallBack{ nullptr };
+		j19pulldown* _parent{ nullptr };
+		SDL_KeyCode _quickkey{ SDLK_UNKNOWN };
+	public:
+		static j19pulldown* Active;
+				
+		std::string Caption{ "" };
+
+		j19pulldown* AddMenu(std::string Caption);
+		j19pulldown* AddItem(std::string Caption, j19callbackfunc CallBack, SDL_KeyCode QuickKey = SDLK_UNKNOWN);
+		j19pulldown* AddStrike();
+
+		// NEVER create a pulldown directly!
+		j19pulldown(std::string Caption);
 	};
 
 	j19gadget* Screen();
