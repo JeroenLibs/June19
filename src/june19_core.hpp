@@ -47,7 +47,7 @@ namespace june19 {
 	enum class j19kind {
 		Unknown,
 		EntireScreen,
-		WorkScreen,
+		WorkScreen,		
 		Group,
 		Label,
 		TextField,
