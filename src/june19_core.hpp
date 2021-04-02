@@ -1,8 +1,8 @@
 // Lic:
 // src/june19_core.hpp
 // June 19
-// version: 20.11.30
-// Copyright (C) 2020 Jeroen P. Broks
+// version: 21.04.02
+// Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -45,11 +45,14 @@ namespace june19 {
 	
 
 	enum class j19kind {
+		// System Core
 		Unknown,
 		EntireScreen,
 		WorkScreen,		
 		Group,
+		// Otherstuff
 		Label,
+		Panel,
 		TextField,
 		RadioButton,
 		CheckBox,
@@ -108,6 +111,7 @@ namespace june19 {
 		static bool haspulldown;
 		static bool hasstatus;
 		static j19gadget* active;
+		static std::string _StatusText;
 
 		static bool defaultfontloaded;
 		static TrickyUnits::TQSG_ImageFont _DefaultFont;
@@ -131,6 +135,9 @@ namespace june19 {
 		j19gadget* GetParent();
 		bool AutoResize{ false }; // Only works on TextFields and buttons
 		bool Down{ false }; // Used for button mouse checks. That always works a bit odd on buttons, eh?
+		static bool ScreenHasPullDown();
+		static j19pulldown* ScreenPullDown(int i);
+		static bool ScreenHasStatus();
 
 		// Will contain true if an item was selected the last time a gadget was drawn (never assign any data to this variable yourself).
 		bool EventSelectItem{ false };
@@ -171,11 +178,15 @@ namespace june19 {
 		void SetFont(std::string FFile);
 		void SetFont(std::string MFile, std::string FFile);
 		void SetFont(jcr6::JT_Dir* MFile, std::string FFile);
+		
 		static void SetDefaultFont(std::string FFile);
 		static void SetDefaultFont(std::string MFile, std::string FFile);
 		static void SetDefaultFont(jcr6::JT_Dir* MFile, std::string FFile);
 		static void KillDefaultFont();
 		int FontHeight();
+
+		static void StatusText(std::string nt);
+		static std::string StatusText();
 
 		std::string Caption{ "" };
 		std::string Text{ "" };

@@ -1,8 +1,8 @@
 // Lic:
 // src/june19_label.hpp
 // June 19
-// version: 20.11.27
-// Copyright (C) 2020 Jeroen P. Broks
+// version: 21.04.02
+// Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -29,4 +29,6 @@ namespace june19{
 
 	j19gadget* CreateLabel(std::string name, int x, int y, int w, int h, j19gadget* group, int style = LABEL_LEFT);
 	j19gadget* CreateLabelR(std::string name, int x, int y, int w, int h, j19gadget* group, int style = LABEL_LEFT);
+
+	j19gadget* CreatePanel(int x, int y, int w, int h, j19gadget* group,j19ctype a=j19ctype::Absolute);
 }

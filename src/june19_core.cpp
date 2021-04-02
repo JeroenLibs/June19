@@ -1,8 +1,8 @@
 // Lic:
 // src/june19_core.cpp
 // June 19
-// version: 20.11.30
-// Copyright (C) 2020 Jeroen P. Broks
+// version: 21.04.02
+// Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -19,6 +19,8 @@
 // EndLic
 #include <TQSG.hpp>
 #include <TQSE.hpp>
+
+#include <QuickString.hpp>
 
 #include "june19_core.hpp"
 
@@ -56,9 +58,39 @@ namespace june19 {
 
 	static vector <j19pulldown> _MenuBar{};
 
+	std::string j19gadget::_StatusText{ "" };
+
 	static void DrawScreen(j19gadget* self) {} // This just had to exist, that's all!
 	static void DrawWorkScreen(j19gadget* self) {
 		// TODO: Pulldown
+		if (j19gadget::ScreenHasPullDown()) {
+		int h{ self->Font()->TextHeight("ABC") };
+			TQSG_ACol(self->BR, self->BG, self->BB, self->BA);
+			TQSG_Rect(0, 0, TQSG_ScreenWidth(), h);
+			TQSG_ACol(self->FR, self->FG, self->FB, 255);
+			int mx = 0;
+			//for (int i = 0; j19gadget::ScreenPullDown(i); i++) {
+			//	auto itm = j19gadget::ScreenPullDown(i);
+			for (auto& itm : _MenuBar) {
+				//std::cout << itm.Caption << endl;
+				self->Font()->Draw(itm.Caption.c_str(), mx + 10, 0);
+				mx += 20 + self->Font()->TextWidth(itm.Caption.c_str());
+			}
+		}
+		if (j19gadget::ScreenHasStatus()){
+			//std::cout << j19gadget::StatusText() << "\n";
+			auto sstat = Split(j19gadget::StatusText(), '\t');
+			auto lstat = sstat.size();
+			auto tstat = (int)floor(TQSG_ScreenWidth() / (lstat + 1));
+			int h{ self->Font()->TextHeight("ABC") };
+			TQSG_ACol(self->BR, self->BG, self->BB, self->BA);
+			TQSG_Rect(0, TQSG_ScreenHeight()-h, TQSG_ScreenWidth(), h);
+			TQSG_ACol(self->FR, self->FG, self->FB, 255);
+			for (int i = 0; i < lstat; ++i) {
+				//std::cout << i << ": " << sstat[i]<<std::endl;
+				self->Font()->Draw(sstat[i], tstat * i, TQSG_ScreenHeight() ,0,1);
+			}
+		}
 		// TODO: Status
 	}
 
@@ -77,6 +109,14 @@ namespace june19 {
 		return kind;
 	}
 	j19gadget* j19gadget::GetParent() { return parent; }
+	bool j19gadget::ScreenHasPullDown() { return haspulldown; }
+	j19pulldown* j19gadget::ScreenPullDown(int i) {
+		if (i < _MenuBar.size()) return &_MenuBar[i];
+		return nullptr;
+	}
+	bool j19gadget::ScreenHasStatus() {
+		return hasstatus;
+	}
 	bool j19gadget::RegDraw(j19kind k, j19draw v) {
 		_error = "";
 		if (HowToDraw.count(k)) {
@@ -128,8 +168,13 @@ namespace june19 {
 			return 0;
 		}
 		*/
-		if (kind == j19kind::EntireScreen || kind == j19kind::WorkScreen) return 0;
-		ggc(_x, tx, W)
+		switch (kind) {
+		case j19kind::EntireScreen: return 0;
+		case j19kind::WorkScreen:
+			return 0;
+		default:
+			ggc(_x, tx, W)
+		}
 	}
 	void j19gadget::W(int value) { W(value, tw); }
 	void j19gadget::W(int value, j19ctype t) { sgc(_w, tw); }
@@ -153,6 +198,7 @@ namespace june19 {
 			auto h{ 0 }; // Pulldown menus and status bar can play a role here!
 			auto fh{ FontHeight() };
 			if (haspulldown) h += fh;
+			//cout << "fuck: " << h << endl;
 			return h;
 		}
 		default:
@@ -198,6 +244,7 @@ namespace june19 {
 			return 0;
 		case j19kind::WorkScreen:
 			_error = "Workscreen not fully supported yet!";
+			if (haspulldown) return FontHeight();
 			return 0; // Pulldown menus and status bar can play a role here!
 		default:
 			if (Y() < 0)
@@ -246,6 +293,7 @@ namespace june19 {
 		fontloaded = true;
 	}
 
+
 	void j19gadget::SetDefaultFont(std::string FFile) {
 		auto J = jcr6::Dir(FFile);
 		SetDefaultFont(&J, "");
@@ -272,6 +320,13 @@ namespace june19 {
 		if (!Font()) return 0;
 		return Font()->TextHeight("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890 the quick brown fox jumps over the lazy dog");
 	}
+
+	void j19gadget::StatusText(std::string nt) {
+		hasstatus = true;
+		_StatusText = nt;
+	}
+
+	std::string j19gadget::StatusText() { return _StatusText; }
 
 	void j19gadget::KillImage(bool force) {
 		if (force || AutoDelImage) {

@@ -1,8 +1,8 @@
 // Lic:
 // src/june19_label.cpp
 // June 19
-// version: 20.11.27
-// Copyright (C) 2020 Jeroen P. Broks
+// version: 21.04.02
+// Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -52,6 +52,7 @@ namespace june19{
 		
 	}
 
+
 	j19gadget* CreateLabel(std::string name, int x, int y, int w, int h, j19gadget* group, int style) {
 		static auto init{ false };
 		auto ret{ new j19gadget() };
@@ -59,7 +60,7 @@ namespace june19{
 			j19gadget::RegDraw(j19kind::Label,DrawLabel);
 		}
 		_error = "";
-		ret->SetKind(j19kind::Label);
+		ret->SetKind(j19kind::Panel);
 		ret->Caption = name;
 		ret->X(x);
 		ret->Y(y);
@@ -75,6 +76,27 @@ namespace june19{
 		ret->Y(y, j19ctype::Percent);
 		ret->W(w, j19ctype::Percent);
 		ret->H(h, j19ctype::Percent);
+		return ret;
+	}
+
+	static void DrawPanel(j19gadget* g){
+		TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
+		TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+	}
+	j19gadget* CreatePanel(int x, int y, int w, int h, j19gadget* group,j19ctype a) {
+		static auto init{ false };
+		auto ret{ new j19gadget() };
+		if (!init) {
+			j19gadget::RegDraw(j19kind::Panel, DrawLabel);
+		}
+		_error = "";
+		ret->SetKind(j19kind::Panel);
+		ret->X(x,a);
+		ret->Y(y,a);
+		ret->W(w,a);
+		ret->H(h,a);
+		ret->BA = 255;
+		ret->SetParent(group);
 		return ret;
 	}
 }
