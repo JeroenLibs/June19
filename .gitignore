@@ -7,3 +7,4 @@ MKL_*
 *.MKL.*
 .vs
 
+*.pyc
