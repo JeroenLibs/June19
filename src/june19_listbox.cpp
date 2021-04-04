@@ -50,6 +50,7 @@ namespace june19 {
 				auto a{ j19action::Select };
 				if (LastClick) a = j19action::DoubleClick;
 				if (g->CBAction) g->CBAction(g, a);
+				LastClick = DoubleClickSpd;
 			}
 			fnt->Draw(txt, g->X(), g->DrawY() + Y);
 			Y += h;
