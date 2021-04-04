@@ -17,6 +17,9 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
+#undef DEBUG_PULLDOWNKEY
+
 #include <TQSG.hpp>
 #include <TQSE.hpp>
 
@@ -56,7 +59,7 @@ namespace june19 {
 	static j19gadget _Screen;
 	static j19gadget _WorkScreen;
 
-	static vector <j19pulldown> _MenuBar{};
+	static vector <std::shared_ptr<j19pulldown>> _MenuBar{};
 
 	std::string j19gadget::_StatusText{ "" };
 
@@ -64,18 +67,19 @@ namespace june19 {
 	static void DrawWorkScreen(j19gadget* self) {
 		// TODO: Pulldown
 		if (j19gadget::ScreenHasPullDown()) {
-		int h{ self->Font()->TextHeight("ABC") };
+			int h{ self->Font()->TextHeight("ABC") };
 			TQSG_ACol(self->BR, self->BG, self->BB, self->BA);
 			TQSG_Rect(0, 0, TQSG_ScreenWidth(), h);
 			TQSG_ACol(self->FR, self->FG, self->FB, 255);
 			int mx = 0;
 			//for (int i = 0; j19gadget::ScreenPullDown(i); i++) {
 			//	auto itm = j19gadget::ScreenPullDown(i);
-			for (auto& itm : _MenuBar) {
+			for (auto itm : _MenuBar) {
 				//std::cout << itm.Caption << endl;
-				self->Font()->Draw(itm.Caption.c_str(), mx + 10, 0);
-				mx += 20 + self->Font()->TextWidth(itm.Caption.c_str());
+				self->Font()->Draw(itm->Caption.c_str(), mx + 10, 0);
+				mx += 20 + self->Font()->TextWidth(itm->Caption.c_str());
 			}
+			if ((TQSE_KeyDown(SDLK_RCTRL) || TQSE_KeyDown(SDLK_LCTRL)) && TQSE_GetKey()) j19pulldown::ExeKey(TQSE_GetKey());
 		}
 		if (j19gadget::ScreenHasStatus()){
 			//std::cout << j19gadget::StatusText() << "\n";
@@ -111,7 +115,7 @@ namespace june19 {
 	j19gadget* j19gadget::GetParent() { return parent; }
 	bool j19gadget::ScreenHasPullDown() { return haspulldown; }
 	j19pulldown* j19gadget::ScreenPullDown(int i) {
-		if (i < _MenuBar.size()) return &_MenuBar[i];
+		if (i < _MenuBar.size()) return _MenuBar[i].get();
 		return nullptr;
 	}
 	bool j19gadget::ScreenHasStatus() {
@@ -488,8 +492,13 @@ namespace june19 {
 
 	j19pulldown* j19gadget::AddMenu(std::string Caption) {
 		haspulldown = true;
-		_MenuBar.push_back(j19pulldown(Caption));		
-		return &(_MenuBar[_MenuBar.size() - 1]);
+		auto MSI = std::make_shared<j19pulldown>(Caption);
+		_MenuBar.push_back(MSI);
+		auto NI{ _MenuBar[_MenuBar.size() - 1].get() };
+#ifdef DEBUG_PULLDOWNKEY
+		cout << "Created Menu Item: " << NI->Caption << " #"<<(unsigned long long)NI<<endl;
+#endif
+		return NI;
 	}
 
 	j19gadget* Screen() {
@@ -619,12 +628,16 @@ namespace june19 {
 		if (this->_type != 1) {
 			return nullptr; // You can't add items to non-submenus.
 		}
-		j19pulldown ret{ Caption };
-		ret._parent = this;
-		return &ret;
+		auto ret{ std::make_shared<j19pulldown>( Caption )};
+		ret->_parent = this;
+		_kids.push_back(ret);
+#ifdef DEBUG_PULLDOWNKEY
+		cout << "Added pd item: " << ret->Caption << " in parent: " << this->Caption << endl;
+#endif
+		return ret.get();
 	}
 	j19pulldown* j19pulldown::AddItem(std::string Caption, j19callbackfunc CallBack, SDL_KeyCode QuickKey) {
-		auto ret{ AddMenu(Caption) };
+		auto ret{ this->AddMenu(Caption) };
 		if (!ret) return nullptr; // Crash prevention
 		ret->_CallBack = CallBack;
 		ret->_type = 0;
@@ -636,6 +649,33 @@ namespace june19 {
 		if (!ret) return nullptr; // Crash prevention
 		ret->_type = 2;
 	}
+
+	int j19pulldown::Type() {
+		return _type;
+	}
+
+	void j19pulldown::TrueExeKey( SDL_KeyCode C) {
+#ifdef DEBUG_PULLDOWNKEY
+		cout << "Check Menu: " << Caption << "; Key: " << (int)C << ":" << (int)_quickkey << endl;
+#endif
+		switch(Type()){
+		case 0:
+			// Normal
+			if (_quickkey == C)
+				Call();
+			break;
+		case 1:
+			for (auto kid : _kids) kid->TrueExeKey(C);
+			break;
+		}
+	}
+
+	void j19pulldown::Call() { if (_CallBack) _CallBack(WorkScreen(), j19action::PDMenuAction); }
+
+	void j19pulldown::ExeKey(SDL_KeyCode C) {
+		for (auto men : _MenuBar) men->TrueExeKey(C);		
+	}
+
 	j19pulldown::j19pulldown(std::string aCaption) {
 		_type = 1;
 		Caption = aCaption;

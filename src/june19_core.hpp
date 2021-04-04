@@ -42,13 +42,13 @@
 #define j19callback(g,a) if (g->CBAction) g->CBAction(g,j19action::a)
 namespace june19 {
 
-	
+
 
 	enum class j19kind {
 		// System Core
 		Unknown,
 		EntireScreen,
-		WorkScreen,		
+		WorkScreen,
 		Group,
 		// Otherstuff
 		Label,
@@ -63,8 +63,8 @@ namespace june19 {
 		Button
 	};
 
-	enum class j19ctype {  Absolute, Percent };
-	enum class j19action {Unknown,Click,Select,Activate,Draw,Check,UnCheck,Type,Enter,BackSpace,PDMenuAction};
+	enum class j19ctype { Absolute, Percent };
+	enum class j19action { Unknown, Click, Select, DoubleClick, Activate, Draw, Check, UnCheck, Type, Enter, BackSpace, PDMenuAction };
 
 	class j19gadget;
 	class j19gadgetitem;
@@ -82,13 +82,13 @@ namespace june19 {
 		bool autodelicon{ false };
 		j19gadget* kid{ nullptr }; // Only used by tabbers
 	public:
-		j19gadgetitem(j19gadget* Mama,std::string Capt="");
+		j19gadgetitem(j19gadget* Mama, std::string Capt = "");
 		std::string Caption;
 		TrickyUnits::TQSG_Image* Icon();
 
 
 		void IconKill();
-		void Icon(TrickyUnits::TQSG_Image* Ico,bool delwhenreleased=true);
+		void Icon(TrickyUnits::TQSG_Image* Ico, bool delwhenreleased = true);
 		void Icon(std::string Ico);
 		void Icon(jcr6::JT_Dir* J, std::string Ico);
 		void Icon(std::string JCRFile, std::string Ico);
@@ -104,7 +104,7 @@ namespace june19 {
 		std::vector<j19gadget*> kids;
 		j19kind kind{ j19kind::Unknown };
 		int _x{ 0 }, _y{ 0 }, _w{ 100 }, _h{ 100 };
-		j19ctype tx{ j19ctype::Absolute }, ty{ j19ctype::Absolute }, tw{ j19ctype::Absolute }, th { j19ctype::Absolute };
+		j19ctype tx{ j19ctype::Absolute }, ty{ j19ctype::Absolute }, tw{ j19ctype::Absolute }, th{ j19ctype::Absolute };
 		static std::map<j19kind, j19draw> HowToDraw;
 		bool fontloaded{ false };
 		TrickyUnits::TQSG_ImageFont _Font;
@@ -125,7 +125,22 @@ namespace june19 {
 		long long _SelectedItem{ -1 };
 
 	public:
+		/// <summary>
+		/// This field is normally ingored, but can used to store extra data.
+		/// </summary>
+		std::string HData{ "" };
+
+		/// <summary>
+		/// How many kids does this gadget have?
+		/// </summary>
+		/// <returns>The total number of kids</returns>
 		size_t NumKids();
+
+		/// <summary>
+		/// Retrieves kid
+		/// </summary>
+		/// <param name="idx">Pointer to kid</param>
+		/// <returns></returns>
 		j19gadget* Kid(size_t idx);
 
 		bool Active();
@@ -143,6 +158,7 @@ namespace june19 {
 		bool EventSelectItem{ false };
 
 		int IntFlag{ 0 };
+		int ScrollX{ 0 }, ScrollY{ 0 };
 		static bool RegDraw(j19kind k, j19draw v);
 
 		void SetKind(j19kind value); // Please note this only works once, and most creation fuctions take care of this automatically.
@@ -173,12 +189,12 @@ namespace june19 {
 		// Scans back if it's fully enabled, checking all parents too
 		bool RecEnabled();
 
-		TrickyUnits::TQSG_ImageFont *Font();
+		TrickyUnits::TQSG_ImageFont* Font();
 		void KillFont();
 		void SetFont(std::string FFile);
 		void SetFont(std::string MFile, std::string FFile);
 		void SetFont(jcr6::JT_Dir* MFile, std::string FFile);
-		
+
 		static void SetDefaultFont(std::string FFile);
 		static void SetDefaultFont(std::string MFile, std::string FFile);
 		static void SetDefaultFont(jcr6::JT_Dir* MFile, std::string FFile);
@@ -196,10 +212,10 @@ namespace june19 {
 
 		bool checked{ false };
 
-		
+
 
 		// Kills an image, unless it was assinged with a direct pointer assignment (this check is omitted by giving 'true' to the force parameter, but I only recommend to do so if you know what you are doing).
-		void KillImage(bool force=false);
+		void KillImage(bool force = false);
 
 		// Assigns image to a gadget (if the gadget doesn't support images this action will be ignored). If 'autodel' is set to true, the image will be removed from the memory when calling KillImage(), FreeGadget() or when assiging another image to it.
 		void Image(TrickyUnits::TQSG_Image* img, bool autodel = false);
@@ -229,12 +245,12 @@ namespace june19 {
 		void SetBackground(j19byte R, j19byte G, j19byte B, j19byte Alpha = 0);
 
 		// Draw a gadget and all its children (if visible)
-		void Draw(bool force=false); 
+		void Draw(bool force = false);
 
 		// These methods should NEVER be called directly! FreeGadget() needs them
 		void KillKids(); // Called by "FreeGadget". Don't call this directly unless you know what you are doing
 		void DetachParent(); // Remove Gadget from parent's kids. NEVER call this yourself unless you know what you doing! FreeGadget needs this method, that's all!
-		void RemoveKid(j19gadget *kid); // Remove kid from parent. NEVER call this yuourself, unless youknow what you are doing! FreeGadget needs this methid, and that's all!
+		void RemoveKid(j19gadget* kid); // Remove kid from parent. NEVER call this yuourself, unless youknow what you are doing! FreeGadget needs this methid, and that's all!
 
 		// Adds an item to a gadget, please note that if you do this with a gadget that is not item based nothing visual will happen, and you will only waste RAM.
 		void AddItem(std::string ItemText);
@@ -271,18 +287,23 @@ namespace june19 {
 	class j19pulldown {
 	private:
 		unsigned char _type{ 0 }; // 0 = normal, 1 = submenu, 2 = strike
-		std::vector<j19pulldown> _kids{};
+		std::vector<std::shared_ptr<j19pulldown>> _kids{};
 		j19callbackfunc _CallBack{ nullptr };
 		j19pulldown* _parent{ nullptr };
 		SDL_KeyCode _quickkey{ SDLK_UNKNOWN };
+		void Call();
+		void TrueExeKey(SDL_KeyCode C);
 	public:
 		static j19pulldown* Active;
-				
+
 		std::string Caption{ "" };
 
 		j19pulldown* AddMenu(std::string Caption);
 		j19pulldown* AddItem(std::string Caption, j19callbackfunc CallBack, SDL_KeyCode QuickKey = SDLK_UNKNOWN);
 		j19pulldown* AddStrike();
+		int Type();
+
+		static void ExeKey(SDL_KeyCode C);
 
 		// NEVER create a pulldown directly!
 		j19pulldown(std::string Caption);

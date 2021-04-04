@@ -18,15 +18,42 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 #include "june19_listbox.hpp"
-
+#include <QuickString.hpp>
 using namespace TrickyUnits;
 
 namespace june19 {
 	static std::string _error;
+	int DoubleClickSpd{ 100 };
 
 	static void DrawListBox(j19gadget* g) {
-		TQSG_ACol(g->BR, g->BG, g->BB, g->BA);
+		static int LastClick{ 0 }; if (LastClick) LastClick--;
+		auto deler{ 1 }; if (!g->Enabled) deler = 2;
+		TQSG_ACol(g->BR/deler, g->BG/deler, g->BB/deler, g->BA);
 		TQSG_Rect(g->DrawX(), g->DrawY(), g->W(), g->H());
+			auto fnt = g->Font();
+		int Y = 0;
+		int h = fnt->TextHeight("ABC");
+		for (unsigned long long idx = g->ScrollY; idx < g->NumItems() && Y+h<g->H(); ++idx) {
+			TQSG_ACol(g->FR/deler, g->FG/deler, g->FB / deler, g->FA);
+			auto txt = g->ItemText(idx);
+			//std::cout << "show: "<<idx<<txt<<"\n";
+			while (txt != "" && fnt->TextWidth(txt.c_str())>=g->W()) txt = left(txt, txt.size() - 1);
+			if (g->SelectedItem() == idx) {
+				TQSG_ACol(g->FR, g->FG, g->FB, 255);
+				TQSG_Rect(g->DrawX(), g->DrawY()+Y, g->W(), h);
+				TQSG_ACol(g->BR, g->BG, g->BB, 255);
+			}
+			//std::cout << "dlbdebug: Enabled=" << (int)g->Enabled << "; MX=" << TQSE_MouseX() << "; MY=" << TQSE_MouseY() << "; DX=" << g->DrawX() << "\n";
+			if (g->Enabled && TQSE_MouseX() > g->DrawX() && TQSE_MouseY() > g->DrawY() + Y && TQSE_MouseX() < g->DrawX() + g->W() && TQSE_MouseY() < g->DrawY()+Y+h && TQSE_MouseHit(1)) {
+				g->SelectItem(idx);
+				//std::cout << "DEBUG LISTBOX: SELECT ITEM> " << idx << std::endl;
+				auto a{ j19action::Select };
+				if (LastClick) a = j19action::DoubleClick;
+				if (g->CBAction) g->CBAction(g, a);
+			}
+			fnt->Draw(txt, g->X(), g->DrawY() + Y);
+			Y += h;
+		}
 	}
 
 	j19gadget* CreateListBox(int x, int y, int w, int h, j19gadget* parent, j19ctype ct) {

@@ -23,6 +23,11 @@
 
 namespace june19 {
 
+	/// <summary>
+	///  Clicked twice within the time this number of frames passes counts as double-click. (Default is 100)
+	/// </summary>
+	extern int DoubleClickSpd;
+
 	j19gadget* CreateListBox(int x, int y, int w, int h, j19gadget* parent, j19ctype ct = j19ctype::Absolute);
 
 }
