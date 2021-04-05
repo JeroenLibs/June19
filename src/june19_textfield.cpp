@@ -50,6 +50,7 @@ namespace june19 {
 				case '\r':
 					j19callback(g, Enter);
 				default:
+					//cout << "Keyhit for char: " << k << endl;
 					if (k >= 32 && k <= 126) {
 						auto txt{ g->Text };
 						txt += k;
