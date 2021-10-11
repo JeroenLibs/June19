@@ -1,7 +1,7 @@
 // Lic:
 // src/june19_core.hpp
 // June 19
-// version: 21.04.02
+// version: 21.10.11
 // Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -60,7 +60,8 @@ namespace june19 {
 		ListBox,
 		Tabber,
 		Textfield,
-		Button
+		Button,
+		VertScrollBar
 	};
 
 	enum class j19ctype { Absolute, Percent };
@@ -75,6 +76,8 @@ namespace june19 {
 
 	// Used for call back actions
 	typedef void (*j19callbackfunc)(j19gadget* source, j19action action);
+
+	typedef void(*j19scroll)(j19gadget* s, int scroll);
 
 	class j19gadgetitem {
 		j19gadget* Parent;
@@ -142,6 +145,7 @@ namespace june19 {
 		/// <param name="idx">Pointer to kid</param>
 		/// <returns></returns>
 		j19gadget* Kid(size_t idx);
+		j19scroll SetScrollY;
 
 		bool Active();
 		void Activate();

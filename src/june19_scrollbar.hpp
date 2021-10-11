@@ -1,6 +1,6 @@
 // Lic:
-// src/june19_listbox.hpp
-// Listbox - June19 (header)
+// src/june19_scrollbar.hpp
+// June 19 - Scrollbar (header)
 // version: 21.10.11
 // Copyright (C) 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
@@ -18,16 +18,15 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 #pragma once
-
 #include "june19_core.hpp"
 
 namespace june19 {
 
 	/// <summary>
-	///  Clicked twice within the time this number of frames passes counts as double-click. (Default is 100)
+	/// Best is NOT to call this function directly!
+	/// Gadgets requiring this will call this feature automatically.
 	/// </summary>
-	extern int DoubleClickSpd;
-
-	j19gadget* CreateListBox(int x, int y, int w, int h, j19gadget* parent, j19ctype ct = j19ctype::Absolute,bool Scroll=true);
-
+	/// <param name="parent"></param>
+	/// <returns></returns>
+	j19gadget* AttachScrollV(j19gadget* parent);
 }
