@@ -66,7 +66,7 @@ namespace june19 {
 				if (g->CBAction) g->CBAction(g, a);
 				LastClick = DoubleClickSpd;
 			}
-			fnt->Draw(txt, g->X(), g->DrawY() + Y);
+			fnt->Draw(txt, g->DrawX(), g->DrawY() + Y);
 			Y += h;
 		}
 	}
