@@ -319,6 +319,10 @@ namespace june19 {
 		defaultfontloaded = false;
 	}
 
+	TrickyUnits::TQSG_ImageFont* j19gadget::GetDefaultFont() {
+		return &_DefaultFont;
+	}
+
 
 	int j19gadget::FontHeight() {
 		if (!Font()) return 0;

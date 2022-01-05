@@ -203,6 +203,8 @@ namespace june19 {
 		static void SetDefaultFont(std::string MFile, std::string FFile);
 		static void SetDefaultFont(jcr6::JT_Dir* MFile, std::string FFile);
 		static void KillDefaultFont();
+		static TrickyUnits::TQSG_ImageFont* GetDefaultFont();
+
 		int FontHeight();
 
 		static void StatusText(std::string nt);
