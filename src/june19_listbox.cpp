@@ -36,7 +36,7 @@ namespace june19 {
 			maxi = QMAX(0,g->NumItems() - (g->H() / h));
 		g->ScrollY = QMIN(maxi, i);
 		g->ScrollY = QMAX(0, g->ScrollY);
-		// std::cout << "Scroll request for listbox $" << (unsigned int)g << "  scroll request=" << i << " maxi=" << maxi << " after correction> " << g->ScrollY << std::endl; // debug only!
+		 std::cout << "Scroll request for listbox $" << (unsigned int)g << "  scroll request=" << i << " maxi=" << maxi << " after correction> " << g->ScrollY << std::endl; // debug only!
 	}
 
 	static void DrawListBox(j19gadget* g) {
@@ -47,6 +47,9 @@ namespace june19 {
 		auto fnt = g->Font();
 		int Y = 0;
 		int h = fnt->TextHeight("ABC");
+		if (TQSE_MouseWheelY() != 0 && TQSE_MouseX() > g->DrawX() && TQSE_MouseY() > g->DrawY() && TQSE_MouseX() < g->DrawX() + g->W() && TQSE_MouseY() < g->DrawY() + g->H()) {
+			SetScroll(g,g->ScrollY - TQSE_MouseWheelY());
+		}
 		for (unsigned long long idx = g->ScrollY; idx < g->NumItems() && Y+h<g->H(); ++idx) {
 			TQSG_ACol(g->FR/deler, g->FG/deler, g->FB / deler, g->FA);
 			auto txt = g->ItemText(idx);
