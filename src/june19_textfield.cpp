@@ -38,6 +38,7 @@ namespace june19 {
 			if (g->RecEnabled()) {
 				if (co) cur = "_";
 				auto k{ TQSE_GetChar() };
+				if (TQSE_KeyDown(SDLK_LCTRL) || TQSE_KeyDown(SDLK_RCTRL)) k = 0;
 				switch (k) {
 				case '\b':
 					if (g->Text.size()) {
@@ -73,11 +74,11 @@ namespace june19 {
 	}
 
 	static string _error{ "" };
-    j19gadget* june19::CreateTextfield(int x, int y, int w, j19gadget* ouwe, std::string defaultvalue) {
-        return CreateTextfield(x, y, w, 0, ouwe, defaultvalue);
-    }
+	j19gadget* june19::CreateTextfield(int x, int y, int w, j19gadget* ouwe, std::string defaultvalue) {
+		return CreateTextfield(x, y, w, 0, ouwe, defaultvalue);
+	}
 
-    j19gadget* CreateTextfield(int x, int y, int w, int h, j19gadget* ouwe, std::string defaultvalue) {
+	j19gadget* CreateTextfield(int x, int y, int w, int h, j19gadget* ouwe, std::string defaultvalue) {
 		static auto init{ false };
 		auto ret{ new j19gadget() };
 		if (!init) {
@@ -96,5 +97,5 @@ namespace june19 {
 		ret->AutoResize = h<=0;
 		return ret;
 
-    }
+	}
 }
