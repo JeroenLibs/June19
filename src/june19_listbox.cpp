@@ -33,7 +33,7 @@ namespace june19 {
 		int
 			Y = 0,
 			h = fnt->TextHeight("ABC"),
-			maxi = QMAX(0,g->NumItems() - (g->H() / h));
+			maxi = QMAX(0,g->NumItems() - (g->H() / QMAX(1,h)));
 		g->ScrollY = QMIN(maxi, i);
 		g->ScrollY = QMAX(0, g->ScrollY);
 		 std::cout << "Scroll request for listbox $" << (unsigned int)g << "  scroll request=" << i << " maxi=" << maxi << " after correction> " << g->ScrollY << std::endl; // debug only!
