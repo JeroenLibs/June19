@@ -57,7 +57,7 @@ namespace june19 {
 		F->Draw(g->Caption, g->DrawX()+(radius*3), g->DrawY());
 	}
 
-    j19gadget* CreateRadioButton(std::string caption, int x, int y, int w, int h, j19gadget* mommy, bool defaultvalue) {
+	j19gadget* CreateRadioButton(std::string caption, int x, int y, int w, int h, j19gadget* mommy, bool defaultvalue) {
 		static auto init{ false };
 		auto ret{ new j19gadget() };
 		if (!init) {
@@ -74,6 +74,6 @@ namespace june19 {
 		ret->IntFlag = 0;
 		ret->checked = defaultvalue;
 		return ret;
-        return nullptr;
-    }
+		//return nullptr;
+	}
 }
