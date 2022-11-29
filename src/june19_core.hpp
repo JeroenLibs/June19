@@ -67,7 +67,8 @@ namespace june19 {
 	enum class j19ctype { Absolute, Percent };
 	enum class j19action { Unknown, Click, Select, DoubleClick, Activate, Draw, Check, UnCheck, Type, Enter, BackSpace, PDMenuAction };
 
-	class j19gadget;
+	
+	class j19gadget; 
 	class j19gadgetitem;
 	class j19pulldown;
 
