@@ -16,6 +16,8 @@ Well, the name is derived from my birthday, which is by the way also the birthda
 # Use
 
 In order to use these libraries, you simply need to make sure the compiler sees the files in the src folder and that the compiler also can find the header files here. Of course, you need SDL present and the compiler to be able to find their header files (and make sure SDL2_Main is able to replace your main function, in order to get stuff done), and of course the compiler must see the required .cpp files in TQSG, TQSE and TrickyUnits and know where to find their respective headers.
+June19 has since 2023 been part of the Slyvina framework, so things should work if you have the proper libraries of Slyvina installed.
+
 Please note that I coded all this in VS2019, and since Microsoft has a bit of a funny way of "standard" and blocks the standards and substitute their own, I cannot fully check if these libraries are fully operational in Linux, Mac and other systems, especially since I have no active systems like that running now. I can only hope it all works.
 
 Now if you just go for 
